@@ -25,6 +25,7 @@ async function handleUserLogin(req,res){
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   const token = setUser(user);
   res.cookie("uid",token);
 =======
@@ -32,6 +33,10 @@ async function handleUserLogin(req,res){
   setUser(sessionId,user);
   res.cookie("uid",sessionId);
 >>>>>>> c8b695c (Added Basic Auth)
+=======
+  const token = setUser(user);
+  res.cookie("uid",token);
+>>>>>>> 3fcb0b4 (upgraded Auth from statefull to stateless auth(JWT TOKEN))
   
   return res.redirect("/");
 
