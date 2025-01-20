@@ -1,15 +1,18 @@
 const express = require("express");
 const path = require("path");
+const cookieParser = require("cookie-parser")
 const {connectToMongoDb} = require("./connect")
+const {restrictToLoggedinUserOnly, checkAuth} = require("./middleware/auth")
 
 const staticRoute = require("./routes/staticRouter")
-
-
 const urlRoute = require("./routes/url");
+const userRoute = require("./routes/user");
+
+
 const URL = require("./models/url");
 
 const app = express();
-const PORT = 8001;
+const PORT = 8000;
 
 connectToMongoDb("mongodb://127.0.0.1:27017/url-shortner")
 .then(()=> console.log("mongodb connected"))
@@ -19,12 +22,14 @@ app.set("views",path.resolve("./views")) //we tell that all our ejs files are in
 
 
 app.use(express.json()); //to parse the body
-app.use(express.urlencoded({urlencoded:false}))
+app.use(express.urlencoded({urlencoded:false})) //to parse the url
+app.use(cookieParser()); //to parse the cookies
 
 
 
-app.use("/url",urlRoute);
-app.use("/", staticRoute);
+app.use("/url",restrictToLoggedinUserOnly, urlRoute);
+app.use("/user",userRoute);
+app.use("/",checkAuth,staticRoute);
 
 
 
