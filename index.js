@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser")
 const {connectToMongoDb} = require("./connect")
-const {restrictToLoggedinUserOnly, checkAuth} = require("./middleware/auth")
+const {checkForAuthentication, restrictTo} = require("./middleware/auth")
 
 const staticRoute = require("./routes/staticRouter")
 const urlRoute = require("./routes/url");
@@ -24,12 +24,13 @@ app.set("views",path.resolve("./views")) //we tell that all our ejs files are in
 app.use(express.json()); //to parse the body
 app.use(express.urlencoded({urlencoded:false})) //to parse the url
 app.use(cookieParser()); //to parse the cookies
+app.use(checkForAuthentication); //to check the authentication of the user
 
 
 
-app.use("/url",restrictToLoggedinUserOnly, urlRoute);
+app.use("/url",restrictTo(["NORMAL","ADMIN"]), urlRoute);
 app.use("/user",userRoute);
-app.use("/",checkAuth,staticRoute);
+app.use("/",staticRoute);
 
 
 
